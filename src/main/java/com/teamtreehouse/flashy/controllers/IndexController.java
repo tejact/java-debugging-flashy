@@ -22,7 +22,8 @@ public class IndexController {
   @RequestMapping("/")
   public String index(Model model) {
     StringBuilder ctaBuilder = new StringBuilder();
-    List<FlashCard> cards = flashCardService.getRandomFlashCards(5);
+    int noOfSampleWords = 3;
+    List<FlashCard> cards = flashCardService.getRandomFlashCards(noOfSampleWords);
     ctaBuilder.append("Refresh your memory about ");
     for (FlashCard card : cards) {
       ctaBuilder.append(card.getTerm());
@@ -30,10 +31,13 @@ public class IndexController {
         ctaBuilder.append(", ");
       }
     }
-    ctaBuilder.append(" and ");
     Long totalCount = flashCardService.getCurrentCount();
-    ctaBuilder.append(totalCount);
+    int remainingCards = (int) (totalCount-noOfSampleWords);
+    if(remainingCards > 0) {
+    ctaBuilder.append(" and ");
+    ctaBuilder.append(totalCount-noOfSampleWords);
     ctaBuilder.append(" more");
+    }
     model.addAttribute("cta", ctaBuilder.toString());
     model.addAttribute("flashCardCount", totalCount);
     return "index";
